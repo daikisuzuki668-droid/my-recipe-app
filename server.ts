@@ -5,7 +5,7 @@ import mysql from 'mysql2/promise'; // さっき入れた mysql2 を使う
 const dbConfig = {
     host: 'aws-my-recipe-db.clu6akceo5s3.ap-northeast-1.rds.amazonaws.com',
     user: 'admin',
-    password: 'あなたのパスワード',
+    password: 'Password123!',
     database: 'recipe_db'
 };
 
