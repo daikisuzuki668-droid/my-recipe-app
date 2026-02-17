@@ -1,36 +1,18 @@
-import http from 'http';
-import mysql from 'mysql2/promise'; // さっき入れた mysql2 を使う
+import express from 'express';
+import recipeRoutes from './routes/recipeRoutes';
+import cors from 'cors';
 
-// RDSへの接続設定
-const dbConfig = {
-    host: 'aws-my-recipe-db.clu6akceo5s3.ap-northeast-1.rds.amazonaws.com',
-    user: 'admin',
-    password: 'Password123!',
-    database: 'recipe_db'
-};
+const app = express();
+app.use(express.json());
+app.use(cors());
 
-const server = http.createServer(async (req, res) => {
-    // 日本語が化けないように設定
-    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+// 静的ファイルの提供（あとでHTMLを作る時に使います）
+app.use(express.static('public'));
 
-    try {
-        // 1. RDSに接続
-        const connection = await mysql.createConnection(dbConfig);
-        
-        // 2. データを取得
-        const [rows] = await connection.execute('SELECT * FROM recipes');
-        
-        // 3. 接続を閉じる
-        await connection.end();
+// APIのルート設定
+app.use('/recipes', recipeRoutes);
 
-        // 4. 結果をブラウザに返す
-        res.end(JSON.stringify(rows));
-    } catch (error) {
-        console.error(error);
-        res.end(JSON.stringify({ error: 'DB接続に失敗しました' }));
-    }
-});
-
-server.listen(3000, () => {
-    console.log('Server is running on port 3000 with RDS!');
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT} (Clean Architecture)`);
 });
